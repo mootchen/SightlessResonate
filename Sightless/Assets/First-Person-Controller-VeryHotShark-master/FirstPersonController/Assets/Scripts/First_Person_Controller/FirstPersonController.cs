@@ -22,27 +22,27 @@ namespace VHS
                     [SerializeField] private float walkSpeed = 2f;
                     [SerializeField] private float runSpeed = 3f;
                     [SerializeField] private float jumpSpeed = 5f;
-                    [Slider(0f,1f)][SerializeField] private float moveBackwardsSpeedPercent = 0.5f;
-                    [Slider(0f,1f)][SerializeField] private float moveSideSpeedPercent = 0.75f;
+                    [Range(0f,1f)][SerializeField] private float moveBackwardsSpeedPercent = 0.5f; //Slider
+                    [Range(0f,1f)][SerializeField] private float moveSideSpeedPercent = 0.75f; //Slider
                 #endregion
 
                 #region Run Settings
                     [Space, Header("Run Settings")]
-                    [Slider(-1f,1f)][SerializeField] private float canRunThreshold = 0.8f;
+                    [Range(-1f,1f)][SerializeField] private float canRunThreshold = 0.8f; //Slider
                     [SerializeField] private AnimationCurve runTransitionCurve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
                 #endregion
 
                 #region Crouch Settings
                     [Space, Header("Crouch Settings")]
-                    [Slider(0.2f,0.9f)][SerializeField] private float crouchPercent = 0.6f;
+                    [Range(0.2f,0.9f)][SerializeField] private float crouchPercent = 0.6f; //Slider
                     [SerializeField] private float crouchTransitionDuration = 1f;
                     [SerializeField] private AnimationCurve crouchTransitionCurve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
                 #endregion
 
                 #region Landing Settings
                     [Space, Header("Landing Settings")]
-                    [Slider(0.05f,0.5f)][SerializeField] private float lowLandAmount = 0.1f;
-                    [Slider(0.2f,0.9f)][SerializeField] private float highLandAmount = 0.6f;
+                    [Range(0.05f,0.5f)][SerializeField] private float lowLandAmount = 0.1f; //Slider
+                    [Range(0.2f,0.9f)][SerializeField] private float highLandAmount = 0.6f; //Slider
                     [SerializeField] private float landTimer = 0.5f;
                     [SerializeField] private float landDuration = 1f;
                     [SerializeField] private AnimationCurve landCurve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
@@ -54,15 +54,15 @@ namespace VHS
                     [SerializeField] private float stickToGroundForce = 5f;
                     
                     [SerializeField] private LayerMask groundLayer = ~0;
-                    [Slider(0f,1f)][SerializeField] private float rayLength = 0.1f;
-                    [Slider(0.01f,1f)][SerializeField] private float raySphereRadius = 0.1f;
+                    [Range(0f,1f)][SerializeField] private float rayLength = 0.1f; //Slider
+                    [Range(0.01f,1f)][SerializeField] private float raySphereRadius = 0.1f; //Slider
                 #endregion
 
                 #region Wall Settings
                     [Space, Header("Check Wall Settings")]
                     [SerializeField] private LayerMask obstacleLayers = ~0;
-                    [Slider(0f,1f)][SerializeField] private float rayObstacleLength = 0.1f;
-                    [Slider(0.01f,1f)][SerializeField] private float rayObstacleSphereRadius = 0.1f;
+                    [Range(0f,1f)][SerializeField] private float rayObstacleLength = 0.1f; //Slider
+                    [Range(0.01f,1f)][SerializeField] private float rayObstacleSphereRadius = 0.1f; //Slider
                     
                 #endregion
 
@@ -76,7 +76,7 @@ namespace VHS
 
                     [Space]
                     [SerializeField] private bool experimental = false;
-                    [InfoBox("It should smooth our player movement to not start fast and not stop fast but it's somehow jerky", InfoBoxType.Warning)]
+                    [InfoBox("It should smooth our player movement to not start fast and not stop fast but it's somehow jerky", EInfoBoxType.Warning)]
                     [Tooltip("If set to very high it will stop player immediately after releasing input, otherwise it just another smoothing to our movement to make our player not move fast immediately and not stop immediately")]
                     [ShowIf("experimental")] [Range(1f,100f)] [SerializeField] private float smoothInputMagnitudeSpeed = 5f;
                     
