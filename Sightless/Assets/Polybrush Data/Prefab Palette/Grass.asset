@@ -191,7 +191,7 @@ MonoBehaviour:
     name: Grass_10
   - gameObject: {fileID: 6154938722488664027, guid: 4a56f5b563825414c8ef2a3e98cc3f20, type: 3}
     settings:
-      m_Strength: 50
+      m_Strength: 25.541992
       m_RotationRangeMin: {x: 0, y: 0, z: 0}
       m_RotationRangeMax: {x: 0, y: 0, z: 0}
       m_ScaleRangeMin: {x: 1, y: 1, z: 1}
@@ -207,7 +207,7 @@ MonoBehaviour:
     name: Stump_10
   - gameObject: {fileID: 6714358857816437899, guid: 0a525bd070a5f4b4a959128dc6d05d06, type: 3}
     settings:
-      m_Strength: 50
+      m_Strength: 16.722689
       m_RotationRangeMin: {x: 0, y: 0, z: 0}
       m_RotationRangeMax: {x: 0, y: 0, z: 0}
       m_ScaleRangeMin: {x: 1, y: 1, z: 1}
