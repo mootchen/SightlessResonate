@@ -8,7 +8,7 @@ public class StaminaBar : MonoBehaviour
 {
     public Slider staminaBar;
 
-    private int maxStamina = 800;
+    private int maxStamina = 8000;
     private int currentStaimina;
     private bool canrun;
     public static StaminaBar instance;
@@ -52,7 +52,7 @@ public class StaminaBar : MonoBehaviour
 
         while(currentStaimina < maxStamina)
         {
-            currentStaimina += maxStamina /100;
+            currentStaimina += maxStamina / 10;
             staminaBar.value = currentStaimina;
             yield return regenTick;
         }
