@@ -54,7 +54,7 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 
 
 		void surf(Input IN, inout SurfaceOutputStandard o) {
-			fixed4 c = (_Color * tex2D(_MainTex, IN.uv_MainTex)) * 0;
+			fixed4 c = (_Color * tex2D(_MainTex, IN.uv_MainTex)) * 1;
 			o.Albedo = c.rgb;
 
 			half DiffFromRingCol = abs(o.Albedo.r - _RingColor.r) + abs(o.Albedo.b - _RingColor.b) + abs(o.Albedo.g - _RingColor.g);
