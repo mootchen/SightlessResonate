@@ -82,28 +82,21 @@ public class NewBehaviourScript : MonoBehaviour
     {
         monster_PlayerNear = false;
         playerLastPosition = Vector3.zero;
-        Debug.Log("Chasing");
         if(monster_PlayerInRange) {
             navMeshAgent.SetDestination(monster_PlayerPosition);
         } else {
-            //Debug.Log(navMeshAgent.remainingDistance+" <= "+navMeshAgent.stoppingDistance);
             if(navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance) {
-                Debug.Log("we;re past it");
                 if (monster_waitTime <= 0.1f && !monster_FoundPlayer)
                 {
-                    Debug.Log("We're in here?");
                     monster_IsPatrol = true;
                     monster_PlayerNear = false;
                     Moving(speedWalk);
                     monster_TimeToRotate = timeToRotate;
                     monster_waitTime = startWaitTime;
                     navMeshAgent.SetDestination(patrolWaypoints[monster_WaypointsIndex].position);
-                    Debug.Log(patrolWaypoints[monster_WaypointsIndex].position);
-                    Debug.Log(monster_WaypointsIndex);
                 }
                 else
                 {
-                    //StopMoving();
                     monster_waitTime -= Time.deltaTime;
                     if(monster_waitTime <= 0)
                         monster_waitTime = startWaitTime;
@@ -225,7 +218,6 @@ public class NewBehaviourScript : MonoBehaviour
     {
         int j = 0;
         Collider[] playerInRange = Physics.OverlapSphere(transform.position, viewRadius, playerMask);
-        Debug.Log(playerInRange.Length);
         for(int i = 0; i < playerInRange.Length; i++)
         {
             Transform player = playerInRange[i].transform;
