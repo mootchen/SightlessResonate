@@ -9,7 +9,7 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 		_Glossiness("Smoothness", Range(0,1)) = 0.5
 		_Metallic("Metallic", Range(0,1)) = 0.0
 		_RingColor("Ring Color", Color) = (1,1,1,1)
-		_RingColorIntensity("Ring Color Intensity", float) = 2
+		_RingColorIntensity("Ring Color Intensity", float) = 5
 		_RingSpeed("Ring Speed", float) = 1
 		_RingWidth("Ring Width", float) = 0.1
 		_RingGradiant("Ring Gradiant", float) = 1
@@ -54,7 +54,7 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 
 
 		void surf(Input IN, inout SurfaceOutputStandard o) {
-			fixed4 c = (_Color * tex2D(_MainTex, IN.uv_MainTex)) * 1;
+			fixed4 c = (_Color * tex2D(_MainTex, IN.uv_MainTex)) * 0;
 			o.Albedo = c.rgb;
 
 			half DiffFromRingCol = abs(o.Albedo.r - _RingColor.r) + abs(o.Albedo.b - _RingColor.b) + abs(o.Albedo.g - _RingColor.g);
@@ -88,7 +88,7 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 						o.Emission.r *= tmp.r;
 						o.Emission.g *= tmp.g;
 						o.Emission.b *= tmp.b;
-						//o.Albedo.rgb *= _RingColorIntensity;
+						o.Albedo.rgb *= _RingColorIntensity;
 					}
 				}
 			}

@@ -22,7 +22,9 @@ public class PickUp : MonoBehaviour
         if (Input.GetKeyDown("e"))
         {
             if (script)
-                script.StartSonarRing(player.transform.position, 30f);
+                script.StartSonarRing(player.transform.position, 15f);
+            StopCoroutine(DynamicFog());
+            StartCoroutine(DynamicFog());
         }
 
         if(isHolding == true) {
@@ -42,6 +44,31 @@ public class PickUp : MonoBehaviour
             item.GetComponent<Rigidbody>().useGravity = true;
             item.transform.position = objectPos;
         }
+    }
+
+    IEnumerator DynamicFog()
+    {
+        float currentFogEndDistance = RenderSettings.fogEndDistance;
+        //Print the time of when the function is first called.
+        Debug.Log("Started Coroutine at timestamp : " + Time.time);
+        for (int i = (int)currentFogEndDistance; i <= 30; i++)
+        {
+            RenderSettings.fogEndDistance = RenderSettings.fogStartDistance + i;
+            //yield on a new YieldInstruction that waits for 5 seconds.
+            yield return new WaitForSeconds(0.1f);
+        }
+        for (int i = 30; i > (int)currentFogEndDistance; i--)
+        {
+            RenderSettings.fogEndDistance = i;
+            //yield on a new YieldInstruction that waits for 5 seconds.
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        RenderSettings.fogEndDistance = currentFogEndDistance;
+
+
+        //After we have waited 5 seconds print the time again.
+        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 
     void OnMouseDown() {
