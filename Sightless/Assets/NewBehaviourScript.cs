@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
+using UnityEngine.SceneManagement;
 
 public class NewBehaviourScript : MonoBehaviour
 {
@@ -34,6 +35,7 @@ public class NewBehaviourScript : MonoBehaviour
     public float monster_waitTime;
     private float monster_TimeToRotate;
     public bool monster_PlayerInRange;
+    public bool monster_LookingForPlayer;
     bool monster_PlayerNear;
     bool monster_IsPatrol;
     public bool monster_FoundPlayer;
@@ -45,8 +47,11 @@ public class NewBehaviourScript : MonoBehaviour
     public SimpleSonarReplacementMain script;
 
     private float lastFire;
+    private float lastStep;
 
     public Color ringColor = new Color(1.0f, 0.2f, 0.2f, 1);
+
+    Vector3 maybePosition;
 
 
     // Start is called before the first frame update
@@ -72,11 +77,17 @@ public class NewBehaviourScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        DeadThePlayer();
         EnvironmentView();
 
         if(Time.time > lastFire) {
             lastFire = Time.time + 5;
             script.StartSonarRing(transform.position, 15f, ringColor);
+        }
+
+        if(Time.time > lastStep) {
+            lastStep = Time.time + 1f;
+            script.StartSonarRing(transform.position, 3f, ringColor);
         }
 
         if (!monster_IsPatrol)
@@ -85,7 +96,11 @@ public class NewBehaviourScript : MonoBehaviour
         }
         else
         {
-            Patroling();
+            if(!monster_LookingForPlayer) {
+                Patroling();
+            } else {
+                LookingPlayer(maybePosition);
+            }
         }
     }
     
@@ -115,6 +130,7 @@ public class NewBehaviourScript : MonoBehaviour
             }
         }
     }
+
     void Patroling()
     {
         if(monster_PlayerNear)
@@ -183,9 +199,10 @@ public class NewBehaviourScript : MonoBehaviour
 
     public void LookingPlayer(Vector3 player)
     {
-        Debug.Log("We're in there.");
+        maybePosition = player;
+        monster_LookingForPlayer = true;
         navMeshAgent.SetDestination(player);
-        if(Vector3.Distance(transform.position, player) <= 0.5)
+        if(navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
         {
             if(monster_waitTime <= 0)
             {
@@ -194,6 +211,7 @@ public class NewBehaviourScript : MonoBehaviour
                 navMeshAgent.SetDestination(patrolWaypoints[monster_WaypointsIndex].position);
                 monster_waitTime = startWaitTime;
                 monster_TimeToRotate = timeToRotate;
+                monster_LookingForPlayer = false;
             }
             else
             {
@@ -223,6 +241,24 @@ public class NewBehaviourScript : MonoBehaviour
         Vector3 rightRayDirection = rightRayRotation * transform.forward;
         Gizmos.DrawRay( transform.position, leftRayDirection * rayRange );
         Gizmos.DrawRay( transform.position, rightRayDirection * rayRange );
+        Gizmos.color = Color.magenta;
+        Gizmos.DrawWireSphere (transform.position, viewRadius/3);
+    }
+
+    void DeadThePlayer() {
+        Collider[] playerInRange = Physics.OverlapSphere(transform.position, viewRadius/3, playerMask);
+        for(int i = 0; i < playerInRange.Length; i++)
+        {
+            if(playerInRange[i].tag == "Player") {
+                SceneManager.LoadScene("DeathScreen");
+            }
+        }
+    }
+
+    public void FindPlayer(Vector3 position) {
+        monster_PlayerInRange = true;
+        monster_IsPatrol = false;
+        monster_PlayerPosition = position;
     }
 
     // Monster ability to sense player and the terrain

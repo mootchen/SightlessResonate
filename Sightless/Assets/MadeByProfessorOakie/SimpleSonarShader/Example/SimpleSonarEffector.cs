@@ -72,7 +72,6 @@ public class SimpleSonarEffector : MonoBehaviour
                         active = true;
                         NewBehaviourScript script = collider.GetComponent<NewBehaviourScript>();
                         if(script != null) {
-                            Debug.Log("trying to attract monster.");
                             script.LookingPlayer(position);
                         }
                         break;

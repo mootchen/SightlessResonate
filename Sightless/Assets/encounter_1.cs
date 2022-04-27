@@ -15,7 +15,6 @@ public class encounter_1 : MonoBehaviour
     }
 
     void OnTriggerEnter(Collider other) {
-        Debug.Log(other);
         if(other.gameObject == Player){
             //encounterTriggered = True;
             //GameObject sphere = GameObject.CreatePrimitive(PrimitiveType.Sphere);

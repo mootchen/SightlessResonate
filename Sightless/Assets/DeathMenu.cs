@@ -7,14 +7,13 @@ public class DeathMenu : MonoBehaviour
 {
 
     //TODO add sceen name to be Swiched to
-    private string SceneName = ""; 
-   public void Replay(){
+    private string SceneName = "Level2"; 
+   public void Replay() {
        SceneManager.LoadScene(SceneName);
-       }
+    }
 
    public void quit(){
        Application.Quit();
-      
    }
  
 }

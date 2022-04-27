@@ -91,6 +91,10 @@ public class PickUp : MonoBehaviour
                     case "Danger":
                         col = Color.red;
                         active = true;
+                        NewBehaviourScript script = collider.GetComponent<NewBehaviourScript>();
+                        if(script != null) {
+                            script.LookingPlayer(position);
+                        }
                         break;
                     default:
                         break;
