@@ -42,6 +42,12 @@ public class NewBehaviourScript : MonoBehaviour
 
     public float viewAngle;
 
+    public SimpleSonarReplacementMain script;
+
+    private float lastFire;
+
+    public Color ringColor = new Color(1.0f, 0.2f, 0.2f, 1);
+
 
     // Start is called before the first frame update
     void Start()
@@ -67,6 +73,11 @@ public class NewBehaviourScript : MonoBehaviour
     void Update()
     {
         EnvironmentView();
+
+        if(Time.time > lastFire) {
+            lastFire = Time.time + 5;
+            script.StartSonarRing(transform.position, 15f, ringColor);
+        }
 
         if (!monster_IsPatrol)
         {
@@ -170,8 +181,9 @@ public class NewBehaviourScript : MonoBehaviour
         monster_FoundPlayer = true;
     }
 
-    void LookingPlayer(Vector3 player)
+    public void LookingPlayer(Vector3 player)
     {
+        Debug.Log("We're in there.");
         navMeshAgent.SetDestination(player);
         if(Vector3.Distance(transform.position, player) <= 0.5)
         {

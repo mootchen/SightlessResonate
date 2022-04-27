@@ -18,15 +18,32 @@ public class PickUp : MonoBehaviour
 
     public Color ringColor = new Color(1.0f, 0.2f, 0.2f, 0);
 
+    public float viewRadius = 0;
+
+    public float ringSpeed = 4f;
+
+    public LayerMask colliderMask;
+
+    public Material replacementMaterial;
+
+    private Vector3 drawPosition;
+
+    private void OnDrawGizmos() {
+        Gizmos.color = Color.blue;
+        //Use the same vars you use to draw your Overlap Sphere to draw your Wire Sphere.
+        Gizmos.DrawWireSphere (drawPosition, viewRadius);
+    }
+
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown("e"))
         {
-            if (script)
-                script.StartSonarRing(player.transform.position, 15f, ringColor);
-            StopCoroutine(DynamicFog());
-            StartCoroutine(DynamicFog());
+            if (script) {
+                drawPosition = player.transform.position;
+                script.StartSonarRing(drawPosition, 15f, ringColor);
+                StartCoroutine(HintTool(drawPosition));
+            }
         }
 
         if(isHolding == true) {
@@ -48,29 +65,68 @@ public class PickUp : MonoBehaviour
         }
     }
 
-    IEnumerator DynamicFog()
+    private Dictionary<Collider, Material> colliderDict = new Dictionary<Collider, Material>();
+
+    IEnumerator HintTool(Vector3 position)
     {
-        float currentFogEndDistance = RenderSettings.fogEndDistance;
-        //Print the time of when the function is first called.
-        Debug.Log("Started Coroutine at timestamp : " + Time.time);
-        for (int i = (int)currentFogEndDistance; i <= 30; i++)
+        float hitTime = Time.timeSinceLevelLoad;
+        while(viewRadius <= 15f)
         {
-            RenderSettings.fogEndDistance = RenderSettings.fogStartDistance + i;
-            //yield on a new YieldInstruction that waits for 5 seconds.
+            viewRadius = Mathf.Max((Time.timeSinceLevelLoad - hitTime) * (ringSpeed+1), 0);
+            Collider[] sphereRange = Physics.OverlapSphere(position, viewRadius);
+            foreach (Collider collider in sphereRange)
+            {
+                bool active = false;
+                Color col = Color.white;
+                switch (collider.tag)
+                {
+                    case "Actable":
+                        col = Color.cyan;
+                        active = true;
+                        break;
+                    case "Viewable":
+                        col = Color.white;
+                        active = true;
+                        break;
+                    case "Danger":
+                        col = Color.red;
+                        active = true;
+                        break;
+                    default:
+                        break;
+                }
+                if(active) {
+                    if (!colliderDict.ContainsKey(collider)) {
+                        colliderDict.Add(collider, collider.GetComponent<Renderer>().material);
+                        Material oldMat = collider.GetComponent<Renderer>().material;
+                        collider.GetComponent<Renderer>().material = replacementMaterial;
+                        collider.GetComponent<Renderer>().material.SetColor("_FresnelColor", col);
+                        collider.gameObject.layer = 9;
+                        StartCoroutine(FadeMat(collider.GetComponent<Renderer>().material));
+                    }
+                }
+            }
+            yield return new WaitForSeconds(0.01f);
+        }
+        viewRadius = 0;
+        yield return new WaitForSeconds(2f);
+        foreach(KeyValuePair<Collider, Material> entry in colliderDict)
+        {
+            entry.Key.GetComponent<Renderer>().material = entry.Value;
+            entry.Key.gameObject.layer = 0;
+        }
+        colliderDict.Clear();
+    }
+
+    IEnumerator FadeMat(Material mat) {
+        Color fresnelColor = mat.GetColor("_FresnelColor");
+        yield return new WaitForSeconds(2f);
+        while(Mathf.Abs(Color.black.r-fresnelColor.r)+Mathf.Abs(Color.black.g-fresnelColor.g)+Mathf.Abs(Color.black.b-fresnelColor.b) > 0.1f)
+        {
+            fresnelColor = Color.Lerp(fresnelColor, Color.black, 0.1f);
+            mat.SetColor("_FresnelColor", fresnelColor);
             yield return new WaitForSeconds(0.1f);
         }
-        for (int i = 30; i > (int)currentFogEndDistance; i--)
-        {
-            RenderSettings.fogEndDistance = i;
-            //yield on a new YieldInstruction that waits for 5 seconds.
-            yield return new WaitForSeconds(0.1f);
-        }
-
-        RenderSettings.fogEndDistance = currentFogEndDistance;
-
-
-        //After we have waited 5 seconds print the time again.
-        Debug.Log("Finished Coroutine at timestamp : " + Time.time);
     }
 
     void OnMouseDown() {

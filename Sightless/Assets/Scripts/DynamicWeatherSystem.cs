@@ -98,7 +98,7 @@ public class DynamicWeatherSystem : MonoBehaviour
                         weatherData[i].fogColor = RenderSettings.fogColor;
                         //RenderSettings.fogColor = Color.Lerp(weatherData[i].currentfogColor, weatherData[i].fogColor, weatherData[i].fogChangeSpeed * Time.deltaTime);
 
-                        ChangeWeatherSettings(weatherData[i].lightIntensity, weatherData[i].weatherAudio);
+                        //ChangeWeatherSettings(weatherData[i].lightIntensity, weatherData[i].weatherAudio);
                     }
                 }
             }

@@ -5,6 +5,10 @@ TagManager:
   serializedVersion: 2
   tags:
   - FxTemporaire
+  - Actable
+  - Viewable
+  - Danger
+  - MonsterEar
   layers:
   - Default
   - TransparentFX
@@ -15,7 +19,7 @@ TagManager:
   - Player
   - Plants
   - Trees
-  - 
+  - Action
   - 
   - 
   - 
