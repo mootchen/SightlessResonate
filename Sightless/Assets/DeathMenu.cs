@@ -6,18 +6,15 @@ using UnityEngine.SceneManagement;
 public class DeathMenu : MonoBehaviour
 {
 
-    
+    //TODO add sceen name to be Swiched to
+    private string SceneName = ""; 
    public void Replay(){
-       print("Replay");
-        Application.Quit();
+       SceneManager.LoadScene(SceneName);
+       }
 
-   }
    public void quit(){
        Application.Quit();
-       print("quit");
+      
    }
-   public void MainMenu(){
-       Application.Quit();
-       print("Mainmenu");
-   }
+ 
 }
