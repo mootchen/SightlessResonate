@@ -30,6 +30,8 @@ namespace VHS
                     [Space, Header("Run Settings")]
                     [Range(-1f,1f)][SerializeField] private float canRunThreshold = 0.8f; //Slider
                     [SerializeField] private AnimationCurve runTransitionCurve = AnimationCurve.EaseInOut(0f,0f,1f,1f);
+                    public StaminaBar staminaBar;
+
                 #endregion
 
                 #region Crouch Settings
@@ -184,7 +186,7 @@ namespace VHS
                     m_previouslyGrounded = m_isGrounded;
                 }
             }
-
+                
             /*
             
                 private void OnDrawGizmos()
@@ -249,7 +251,7 @@ namespace VHS
                 {
                     m_smoothCurrentSpeed = Mathf.Lerp(m_smoothCurrentSpeed, m_currentSpeed, Time.deltaTime * smoothVelocitySpeed);
 
-                    if(movementInputData.IsRunning && CanRun())
+                    if(movementInputData.IsRunning && CanRun() && canRunFromStamina())
                     {
                         float _walkRunPercent = Mathf.InverseLerp(walkSpeed,runSpeed, m_smoothCurrentSpeed);
                         m_finalSmoothCurrentSpeed = runTransitionCurve.Evaluate(_walkRunPercent) * m_walkRunSpeedDifference + walkSpeed;
@@ -312,13 +314,18 @@ namespace VHS
 
                 protected virtual bool CanRun()
                 {
-                    Vector3 _normalizedDir = Vector3.zero;
+                    if(canRunFromStamina()){
+                        Vector3 _normalizedDir = Vector3.zero;
 
-                    if(m_smoothFinalMoveDir != Vector3.zero)
-                        _normalizedDir = m_smoothFinalMoveDir.normalized;
+                        if(m_smoothFinalMoveDir != Vector3.zero)
+                            _normalizedDir = m_smoothFinalMoveDir.normalized;
 
-                    float _dot = Vector3.Dot(transform.forward,_normalizedDir);
-                    return _dot >= canRunThreshold && !movementInputData.IsCrouching ? true : false;
+                        float _dot = Vector3.Dot(transform.forward,_normalizedDir);
+                        return _dot >= canRunThreshold && !movementInputData.IsCrouching ? true : false;
+                    }else{
+                        return false;
+                    }
+                   
                 }
 
                 protected virtual void CalculateMovementDirection()
@@ -567,6 +574,25 @@ namespace VHS
 
                     transform.rotation = Quaternion.Slerp(_currentRot,_desiredRot,Time.deltaTime * smoothRotateSpeed);
                 }
+            #endregion
+            
+            #region staminaBar methods
+                //checks if stamina bar is empty
+                public virtual bool canRunFromStamina(){
+                    bool canrun = staminaBar.CanRunStamina();
+                   reduceStamina();
+                    //print(m_currentSpeed);
+                    return canrun;
+                }
+                    //reduces stamina from 
+               public virtual void reduceStamina(){
+                   if(movementInputData.IsRunning ){
+                        staminaBar.UseStamina(1);
+                        
+                     
+                    }
+               }
+
             #endregion
         #endregion
     }
