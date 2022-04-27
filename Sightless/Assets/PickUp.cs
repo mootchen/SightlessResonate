@@ -16,13 +16,15 @@ public class PickUp : MonoBehaviour
     public SimpleSonarReplacementMain script;
     public GameObject player;
 
+    public Color ringColor = new Color(1.0f, 0.2f, 0.2f, 0);
+
     // Update is called once per frame
     void Update()
     {
         if (Input.GetKeyDown("e"))
         {
             if (script)
-                script.StartSonarRing(player.transform.position, 15f);
+                script.StartSonarRing(player.transform.position, 15f, ringColor);
             StopCoroutine(DynamicFog());
             StartCoroutine(DynamicFog());
         }

@@ -6,10 +6,8 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 		_Color("Color", Color) = (1,1,1,1)
 		_Darkness("Darkness", float) = 1
 		_MainTex("Albedo", 2D) = "white" {}
-		_Glossiness("Smoothness", Range(0,1)) = 0.5
-		_Metallic("Metallic", Range(0,1)) = 0.0
 		_RingColor("Ring Color", Color) = (1,1,1,1)
-		_RingColorIntensity("Ring Color Intensity", float) = 5
+		_RingColorIntensity("Ring Color Intensity", float) = 2
 		_RingSpeed("Ring Speed", float) = 1
 		_RingWidth("Ring Width", float) = 0.1
 		_RingGradiant("Ring Gradiant", float) = 1
@@ -21,7 +19,7 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 
 		CGPROGRAM
 		// Physically based Standard lighting model, and enable shadows on all light types
-		#pragma surface surf Standard fullforwardshadows
+		#pragma surface surf NoLighting
 
 		// Use shader model 3.0 target, to get nicer looking lighting
 		#pragma target 3.0
@@ -38,11 +36,10 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 		// The size of these arrays is the number of rings that can be rendered at once.
 		// If you want to change this, you must also change QueueSize in SimpleSonarShader_Parent.cs
 		half4 _hitPts[20];
+		half4 _ringColors[20];
 		half _StartTime;
 		half _Intensity[20];
 
-		half _Glossiness;
-		half _Metallic;
 		fixed4 _Color;
 		fixed4 _RingColor;
 		half _RingColorIntensity;
@@ -52,16 +49,24 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 		float _RingGradiant;
 		float _Darkness;
 
+		fixed4 LightingNoLighting(SurfaceOutput s, fixed3 lightDir, fixed atten)
+		{
+			fixed4 c;
+			c.rgb = s.Albedo; 
+			c.a = s.Alpha;
+			return c;
+		}
 
-		void surf(Input IN, inout SurfaceOutputStandard o) {
+
+		void surf(Input IN, inout SurfaceOutput o) {
 			fixed4 c = (_Color * tex2D(_MainTex, IN.uv_MainTex)) * 0;
 			o.Albedo = c.rgb;
 
-			half DiffFromRingCol = abs(o.Albedo.r - _RingColor.r) + abs(o.Albedo.b - _RingColor.b) + abs(o.Albedo.g - _RingColor.g);
 
 			// Check every point in the array
 			// The goal is to set RGB to highest possible values based on current sonar rings
 			for (int i = 0; i < 20; i++) {
+				half DiffFromRingCol = abs(o.Albedo.r - _ringColors[i].r) + abs(o.Albedo.b - _ringColors[i].b) + abs(o.Albedo.g - _ringColors[i].g);
 
 				half d = distance(_hitPts[i], IN.worldPos);
 				half intensity = _Intensity[i] * _RingIntensityScale;
@@ -72,11 +77,11 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 
 					float f = length(posInRing);
 					val *= f * (pow(f, _RingGradiant) + pow(1 - f, _RingGradiant * 4)) * 0.5;
-					half3 tmp = _RingColor * val * _RingColorIntensity;
+					half3 tmp = _ringColors[i] * val * _RingColorIntensity;
 					tmp += c;
 
 					// Determine if predicted values will be closer to the Ring color
-					half tempDiffFromRingCol = abs(tmp.r - _RingColor.r) + abs(tmp.b - _RingColor.b) + abs(tmp.g - _RingColor.g);
+					half tempDiffFromRingCol = abs(tmp.r - _ringColors[i].r) + abs(tmp.b - _ringColors[i].b) + abs(tmp.g - _ringColors[i].g);
 					//half tempDiffFromRingCol = abs(tmp.rgb - _RingColor.rgb);
 					if (tempDiffFromRingCol < DiffFromRingCol)
 					{
@@ -93,8 +98,6 @@ Shader "MadeByProfessorOakie/SimpleSonarShaderMod" {
 				}
 			}
 
-			o.Metallic = _Metallic;
-			o.Smoothness = _Glossiness;
 		}
 
 		ENDCG
